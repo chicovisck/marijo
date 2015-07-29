@@ -26,6 +26,63 @@
   var appbarElement = querySelector('.app-bar');
   var menuBtn = querySelector('.menu');
   var main = querySelector('main');
+  var signin = document.getElementById('signin');
+  var email = document.getElementById('email');
+  var password = document.getElementById('password');
+
+
+  // FIREBASE SETUP
+  var myFirebaseRef = new Firebase("https://brilliant-inferno-7980.firebaseio.com/");
+
+  
+
+
+  signin.addEventListener('click', createUser);
+
+  // FUNCtiONS ----------------------------------------------------- //
+
+  function createUser(userData) {
+    //GET
+
+  
+    var e = email.value;
+    var p = password.value;
+
+    var validated = true;
+
+    if(!validateEmail(e)) {
+      validated = false
+      alert('Informe um e-mail válido');
+      return false;
+    }
+    
+    if(p.length < 6) {
+      validated = false;
+      alert('A senha deve ter pelo menos 6 caracteres');
+      return false;
+    }
+
+    
+    if(validated == true)
+    {
+      myFirebaseRef.createUser({
+      email    : e,
+      password : p,
+    }, function(error, userData) {
+      if (error) {
+        console.log("Error creating user:", error);
+      } else {
+        console.log("Successfully created user account with uid:", userData.uid);
+        alert('usuario '+ e +'criado com sucesso');
+      }
+    });
+    }
+  }
+
+  function validateEmail(email) {
+    var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+    return re.test(email);
+  }
 
   function closeMenu() {
     body.classList.remove('open');
@@ -40,11 +97,11 @@
     navdrawerContainer.classList.add('opened');
   }
 
-  main.addEventListener('click', closeMenu);
+  /*main.addEventListener('click', closeMenu);
   menuBtn.addEventListener('click', toggleMenu);
   navdrawerContainer.addEventListener('click', function (event) {
     if (event.target.nodeName === 'A' || event.target.nodeName === 'LI') {
       closeMenu();
     }
-  });
+  });*/
 })();

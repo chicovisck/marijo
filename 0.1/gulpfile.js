@@ -27,6 +27,7 @@ var runSequence = require('run-sequence');
 var browserSync = require('browser-sync');
 var pagespeed = require('psi');
 var reload = browserSync.reload;
+var server = require('gulp-server-livereload');
 
 var AUTOPREFIXER_BROWSERS = [
   'ie >= 10',
@@ -156,7 +157,7 @@ gulp.task('serve', ['styles'], function () {
 
   gulp.watch(['app/**/*.html'], reload);
   gulp.watch(['app/styles/**/*.{scss,css}'], ['styles', reload]);
-  gulp.watch(['app/scripts/**/*.js'], ['jshint']);
+  //gulp.watch(['app/scripts/**/*.js'], ['jshint']);
   gulp.watch(['app/images/**/*'], reload);
 });
 
@@ -173,9 +174,15 @@ gulp.task('serve:dist', ['default'], function () {
   });
 });
 
+gulp.task( 'webserver', function(){
+  gulp.src('app').pipe(server({livereload: true, open:true}));//port:8080, directoryListing: true
+});
+
+
 // Build production files, the default task
 gulp.task('default', ['clean'], function (cb) {
-  runSequence('styles', ['jshint', 'html', 'images', 'fonts', 'copy'], cb);
+ // runSequence('styles', ['jshint', 'html', 'images', 'fonts', 'copy'], cb);
+  runSequence('styles', ['html', 'images', 'fonts', 'copy', 'webserver'], cb);
 });
 
 // Run PageSpeed Insights
